@@ -13,10 +13,10 @@ app.use('/editor', express.static(path.join(__dirname, 'client')));
 
 const db = mysql.createConnection({
     host: 'mysql-387af68e-brainwave-database.h.aivencloud.com',
-    user: 'avnadmin',
+    user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: 'chatDB',
-    port: 21277,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT,
     ssl: { rejectUnauthorized: false }
 });
 
