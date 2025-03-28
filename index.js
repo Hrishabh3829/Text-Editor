@@ -3,6 +3,7 @@ const socketIO = require('socket.io');
 const http = require('http');
 const path = require('path');
 const mysql = require('mysql2');
+require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
@@ -13,7 +14,7 @@ app.use('/editor', express.static(path.join(__dirname, 'client')));
 const db = mysql.createConnection({
     host: 'mysql-387af68e-brainwave-database.h.aivencloud.com',
     user: 'avnadmin',
-    password: 'AVNS_F7jis_DHaFvxx_fsR_H',
+    password: process.env.DB_PASSWORD,
     database: 'chatDB',
     port: 21277,
     ssl: { rejectUnauthorized: false }
