@@ -1,37 +1,59 @@
-const express=require('express')
-const socketIO=require('socket.io')
+const express = require('express');
+const socketIO = require('socket.io');
+const http = require('http');
+const path = require('path');
+const mysql = require('mysql2');
 
-const http=require('http')
-const path=require('path')
+const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
 
+app.use('/editor', express.static(path.join(__dirname, 'client')));
 
-const app=express()
-
-const server=http.createServer(app)
-
-const io=socketIO(server)
-
-
-app.use('/editor',express.static(path.join(__dirname,'client')))
-
-var textEditor="This is co-editor space"
-
-
-io.on('connection',(socket)=>{
-    console.log("Connected to socket")
-    socket.emit('startingCoEditor',textEditor)
+const db = mysql.createConnection({
+    host: 'mysql-387af68e-brainwave-database.h.aivencloud.com',
+    user: 'avnadmin',
+    password: 'AVNS_F7jis_DHaFvxx_fsR_H',
+    database: 'chatDB',
+    port: 21277,
+    ssl: { rejectUnauthorized: false }
+});
 
 
-    socket.on('textUpdate',(text)=>{
-        console.log("Text update recieved as : "+text)
-        textEditor=text
-        socket.broadcast.emit('updatedText',textEditor)
+db.connect(err => {
+    if (err) {
+        console.error('MySQL Connection Error:', err);
+        return;
+    }
+    console.log('Connected to MySQL Database');
+});
 
-    })
 
+io.on('connection', (socket) => {
+    console.log("Connected to socket");
 
-})
+    db.query('SELECT * FROM messages ORDER BY timestamp ASC', (err, results) => {
+        if (!err) {
+            socket.emit('loadMessages', results);
+        }
+    });
 
-server.listen(3000,()=>{
-    console.log("Running on port 3000 /editor")
-})
+    socket.on('textUpdate', (text) => {
+        console.log("Text update received: " + text);
+
+        db.query('INSERT INTO messages (text) VALUES (?)', [text], (err, result) => {
+            if (err) {
+                console.error('Error saving message:', err);
+                return;
+            }
+            console.log('Message saved to DB:', result.insertId);
+        });
+
+        
+        socket.broadcast.emit('updatedText', text);
+    });
+});
+
+server.listen(3000, () => {
+    console.log("Running on port 3000 /editor");
+});
