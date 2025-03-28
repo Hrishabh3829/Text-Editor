@@ -3,27 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Collaborative Text Editor</title>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <style>
-        #textEditor {
-            resize: none;
-            width: 100%;
-            height: 50vh;
-            font-size: 1.5em;
-        }
-        h1{
+        body {
+            background: linear-gradient(to right, #71C9CE, #CBF1F5, #A6E3E9);
             text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        #textEditor {
+            width: 80%;
+            height: 50vh;
+            font-size: 1.2em;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        #saveButton {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            background: #026873;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #saveButton:hover {
+            background: #014751;
         }
     </style>
 </head>
 <body>
-    <h1>This is A co-text Editor</h1>
+    <h1>Collaborative Text Editor</h1>
     <textarea id="textEditor"></textarea>
-
+    <br>
+    <button id="saveButton">Save</button>
     <script src="script.js"></script>
-
-    
-    
 </body>
 </html>

@@ -1,19 +1,24 @@
+var socket = io();
+const textArea = document.getElementById("textEditor");
+const saveButton = document.getElementById("saveButton");
 
 
-var socket=io()
-const textArea=document.getElementById("textEditor")
+socket.on("startingCoEditor", (data) => {
+    textArea.value = data;
+    console.log("Starting data: " + data);
+});
 
-socket.on("startingCoEditor",(data)=>{
-    textArea.value=data
-    console.log("Starting data: "+data)
-})
 
-socket.on('updatedText',(data)=>{
-    console.log("Updated text recived as: "+data)
-    textArea.value=data
-})
+socket.on("updatedText", (data) => {
+    textArea.value = data;
+});
 
-textArea.addEventListener('keydown',()=>{
-    console.log("Enterd Text: "+textArea.value)
-    socket.emit('textUpdate',textArea.value)
-})
+
+textArea.addEventListener("input", () => {
+    socket.emit("textUpdate", textArea.value);
+});
+
+saveButton.addEventListener("click", () => {
+    socket.emit("saveText", textArea.value);
+    alert("Text saved successfully!"); 
+});
